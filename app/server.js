@@ -9,10 +9,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.text());
 
-// ----------------------------------
-
-var path = require('path');
-
 
 // note: DATA from the SERVER comes in one long STRING then once "PARSED" it is converted into a JS OBJECT
 //
