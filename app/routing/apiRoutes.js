@@ -1,29 +1,54 @@
+// require all friend options
+var friends = require("../data/friends");
 
-var path = require('path'); // including path node module in file
+// export function
+module.exports = function(app) {
 
-var friendMatch = require("../data/friend.js"); // providing access to friend array in file
+  app.get("/api/friends", function(req, res) {
+    res.json(friends);
+  });
 
-// ----------------------------------
-
-module.exports = function(app) { // everything inside the function is being exported so that it will be accessible to other files
-
-	// This shows all friend options
-
-	app.get('/api/friends',function(req,res){
-
-		res.json(friendMatch);
-
-	});
+ // matching the preset friends scores with the users scores to find a match
+  app.post("/api/friends", function(req, res) {
 
 
+    var friendMatch = {
+      name: "",
+      photo: "",
+      friendDiff: Infinity
+    };
 
-// ----------------------------------
 
-app.post("/api/friends", function(req, res) { // this will add new friends to the array
+    var userData = req.body;
+    var userScores = userData.scores;
 
-	// A new body object containing the parsed data is populated on the request object after the middleware (i.e. req.body).
+    // the diff between userScore and friends
+    var totalDiff;
 
-	// Once the user completes the survey there responses will be placed in an object
-	var userInput = req.body;y
 
-}
+    for (var i = 0; i < friends.length; i++) {
+      var currentFriend = friends[i];
+      totalDiff = 0;
+
+      console.log(currentFriend.name);
+
+   
+      for (var j = 0; j < currentFriend.scores.length; j++) {
+        var currentFriendScore = currentFriend.scores[j];
+        var currentUserScore = userScores[j];
+
+        totalDiff += Math.abs(parseInt(currentUserScore) - parseInt(currentFriendScore));
+      }
+
+      if (totalDiff <= friendMatch.friendDiff) {
+        friendMatch.name = currentFriend.name;
+        friendMatch.photo = currentFriend.photo;
+        friendMatch.friendDiff = totalDiff;
+      }
+    }
+
+    friends.push(userData);
+
+    res.json(friendMatch);
+  });
+};
